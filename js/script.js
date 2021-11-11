@@ -11,19 +11,30 @@ function initPage(){
     const todaysWeather = document.getElementById("todays-weather")
     let searchHistory = JSON.parse(localStorage.getItem("search")) || [];
 
-    function todaysForecast(cityName) {
+    function weatherForecast(cityName) {
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKey;
         fetch(queryURL)
-            .then(function (response){
+            .then(function (response) {
                 let lat = response.data.coord.lat;
                 let lon = response.data.coord.lon;
                 let UVURL = "https://api.openweathermap.org/data/2.5/uvi/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey + "&cnt=1";
                 fetch(UVURL)
+                    .then(function (response) {
+                        UVIndex.innerHTML = response.data[0].value;
+                        currentUVEl.innerHTML = "UV Index: ";
+                        currentUVEl.append(UVIndex);
+                    })
                 let cityID = response.data.id;
                 let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?id=" + cityID + "&appid=" + APIKey;
                 fetch(forecastURL)
             })
     }
+
+    searchCity.addEventListener("click", function () {
+        console.log("search button clicked")
+        const name = searchName.value
+        weatherForecast(name);
+    })
 }
 
 initPage();
